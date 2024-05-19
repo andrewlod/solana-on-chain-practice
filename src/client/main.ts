@@ -1,57 +1,33 @@
 import {
-  Keypair,
   Connection,
   LAMPORTS_PER_SOL,
-  TransactionInstruction,
-  Transaction,
-  sendAndConfirmTransaction
 } from '@solana/web3.js';
 
-import fs from 'mz/fs'
-import path from 'path';
+import { getLocalAccount, getProgram, createAccountWithSeed, pingProgram } from './util';
+import dotenv from 'dotenv';
+import { HELLO_COUNTER_SIZE } from './structs/HelloCounter';
+dotenv.config();
 
-const SOLANA_NETWORK = 'devnet';
+const {
+  SOLANA_NETWORK,
+  PROGRAM_SEED
+} = process.env;
 
-const PROGRAM_KEYPAIR_PATH = path.join(
-  path.resolve(__dirname, '../../dist/program'),
-  'hello_solana-keypair.json'
-);
 
 async function main() {
+  if (PROGRAM_SEED === undefined) {
+    throw new Error('PROGRAM_SEED is not defined');
+  }
+
   let connection = new Connection(`http://api.${SOLANA_NETWORK}.solana.com`, 'confirmed');
 
-  const secretKeyString = await fs.readFile(PROGRAM_KEYPAIR_PATH, { encoding: 'utf8' });
-  const secretKey = Uint8Array.from(JSON.parse(secretKeyString));
-  const programKeypair = Keypair.fromSecretKey(secretKey);
-  let programId = programKeypair.publicKey;
-
-  const triggerKeypair = Keypair.generate();
-  const airdropRequest = await connection.requestAirdrop(
-    triggerKeypair.publicKey,
-    LAMPORTS_PER_SOL
-  );
-
-  const latestBlockhash = await connection.getLatestBlockhash();
-
-  await connection.confirmTransaction({
-    blockhash: latestBlockhash.blockhash,
-    lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-    signature: airdropRequest
-  });
-
-  const instruction = new TransactionInstruction({
-    keys: [{
-      pubkey: triggerKeypair.publicKey,
-      isSigner: false,
-      isWritable: true
-    }],
-    programId,
-    data: Buffer.alloc(0)
-  });
-  await sendAndConfirmTransaction(
-    connection, new Transaction().add(instruction),
-    [triggerKeypair]
-  );
+  const localAccount = await getLocalAccount();
+  console.log(`Local account public key: ${localAccount.publicKey}`);
+  const program = await getProgram('hello_solana');
+  console.log(`Program public key: ${program.publicKey}`);
+  let clientPubKey = await createAccountWithSeed(connection, localAccount, PROGRAM_SEED, program.publicKey, HELLO_COUNTER_SIZE, LAMPORTS_PER_SOL);
+  console.log(`Client public key: ${clientPubKey}`);
+  await pingProgram(connection, program.publicKey, clientPubKey, localAccount);
 }
 
 main();

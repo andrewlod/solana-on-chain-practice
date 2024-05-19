@@ -1,3 +1,4 @@
 dist/
 node_modules/
-src/program/target/
+src/hello_solana/target/
+.env

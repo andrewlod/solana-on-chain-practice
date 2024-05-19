@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node src/client/main.ts",
     "clean": "npm run clean:program",
+    "reset-and-build": "./scripts/cicd.sh reset-and-build",
     "build:program": "cargo build-bpf --manifest-path=./src/program/Cargo.toml --bpf-out-dir=dist/program",
     "clean:program": "cargo clean --manifest-path=./src/program/Cargo.toml && rm -rf ./dist",
     "test:program": "cargo test-bpf --manifest-path=./src/program/Cargo.toml"
@@ -14,7 +15,10 @@
   "license": "ISC",
   "dependencies": {
     "@solana/web3.js": "^1.91.8",
-    "mz": "^2.7.0"
+    "borsh": "^2.0.0",
+    "dotenv": "^16.4.5",
+    "mz": "^2.7.0",
+    "yaml": "^2.4.2"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.6",
