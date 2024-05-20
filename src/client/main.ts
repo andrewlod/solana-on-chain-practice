@@ -6,6 +6,7 @@ import {
 import { getLocalAccount, getProgram, createAccountWithSeed, pingProgram } from './util';
 import dotenv from 'dotenv';
 import { HELLO_COUNTER_SIZE } from './structs/HelloCounter';
+import { ExpressionCalculator, Operation } from './structs/ExpressionCalculator';
 dotenv.config();
 
 const {
@@ -27,7 +28,7 @@ async function main() {
   console.log(`Program public key: ${program.publicKey}`);
   let clientPubKey = await createAccountWithSeed(connection, localAccount, PROGRAM_SEED, program.publicKey, HELLO_COUNTER_SIZE, LAMPORTS_PER_SOL);
   console.log(`Client public key: ${clientPubKey}`);
-  await pingProgram(connection, program.publicKey, clientPubKey, localAccount);
+  await pingProgram(connection, program.publicKey, clientPubKey, localAccount, ExpressionCalculator.create(3.45, 123.45, Operation.Multiply));
 }
 
 main();

@@ -87,7 +87,8 @@ export async function pingProgram(
   connection: Connection,
   programId: PublicKey,
   clientPubKey: PublicKey,
-  localKeypair: Keypair
+  localKeypair: Keypair,
+  data: Buffer
 ) {
   const instruction = new TransactionInstruction({
     keys: [{
@@ -96,7 +97,7 @@ export async function pingProgram(
       isWritable: true
     }],
     programId,
-    data: Buffer.alloc(0)
+    data
   });
 
   await sendAndConfirmTransaction(
