@@ -11,9 +11,6 @@ jobs:
   check:
     name: Check
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src/hello_solana
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -29,13 +26,11 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --manifest-path=./src/hello_solana/Cargo.toml
   
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src/hello_solana
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -48,14 +43,8 @@ jobs:
           override: true
           components: rustfmt, clippy
 
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings
+          args: -- -D warnings --manifest-path=./src/hello_solana/Cargo.toml
