@@ -5,15 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/client/main.ts",
-    "clean": "npm run clean:program",
     "reset-and-build": "./scripts/cicd.sh reset-and-build",
-    "build:program": "cargo build-bpf --manifest-path=./src/program/Cargo.toml --bpf-out-dir=dist/program",
-    "clean:program": "cargo clean --manifest-path=./src/program/Cargo.toml && rm -rf ./dist",
-    "test:program": "cargo test-bpf --manifest-path=./src/program/Cargo.toml"
+    "build": "./scripts/cicd.sh build",
+    "deploy": "./scripts/cicd.sh deploy",
+    "clean": "./scripts/cicd.sh clean",
+    "test": "cargo test-bpf --manifest-path=./src/hello_solana/Cargo.toml"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@solana/buffer-layout": "^4.0.1",
     "@solana/web3.js": "^1.91.8",
     "borsh": "^2.0.0",
     "dotenv": "^16.4.5",
