@@ -1,3 +1,6 @@
+mod calculator;
+use crate::calculator::ExpressionCalculator;
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
   account_info::{next_account_info, AccountInfo},
@@ -7,6 +10,7 @@ use solana_program::{
   pubkey::Pubkey,
   program_error::ProgramError
 };
+
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 struct HelloCounter {
@@ -38,6 +42,15 @@ fn process_instruction(
   hello_counter.serialize(&mut &mut account.data.borrow_mut()[..])?;
 
   msg!("This program has been executed {} time(s)", &hello_counter.counter);
+
+  let calc_expr = ExpressionCalculator::try_from_slice(instruction_data)?;
+  match calc_expr.evaluate() {
+    Ok(result) => msg!("Calculation result: {}", result),
+    Err(e) => {
+      msg!("Calculation error: {:?}", e);
+      return Err(ProgramError::InvalidInstructionData);
+    }
+  }
   
   Ok(())
 }
