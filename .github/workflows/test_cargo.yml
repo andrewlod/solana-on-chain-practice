@@ -9,7 +9,11 @@ on:
 
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src/hello_solana
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -25,4 +29,3 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --manifest-path=./src/hello_solana/Cargo.toml
